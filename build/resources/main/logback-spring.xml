@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_PATH" value="./var/log/auth"/> <!-- 로컬동작으로 해놔서 향후 변경해야함 -->
+    <property name="MAX_FILE_SIZE" value="200MB"/>
+    <springProperty scope="context" name="APP_NAME" source="application.name"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss} %level %logger{36} - %msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <prudent>true</prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}.app.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>{"kibana_index":"${APP_NAME}.app", "log_date": "%d{yyyy-MM-dd HH:mm:ss}","log_level":"%level","userId":"%X{userId}","thread":"%thread","traceId":"%mdc{trace_id}","spanId":"%mdc{span_id}","log_message": %msg}%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <prudent>true</prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}.error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>{"kibana_index":"${APP_NAME}.error", "log_date": "%d{yyyy-MM-dd HH:mm:ss}","log_level":"%level","userId":"%X{userId}","thread":"%thread","traceId":"%mdc{trace_id}","spanId":"%mdc{span_id}","log_message": %msg}%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR_ALERT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <prudent>true</prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}.error_alert.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>{"kibana_index":"${APP_NAME}.error_alert", "log_date": "%d{yyyy-MM-dd HH:mm:ss}","log_level":"%level","userId":"%X{userId}","thread":"%thread","traceId":"%mdc{trace_id}","spanId":"%mdc{span_id}","log_message": %msg}%n</pattern>
+        </encoder>
+    </appender>
+
+    <springProfile name="log-dev">
+        <logger name="info" additivity="false" level="INFO">
+            <appender-ref ref="INFO"/>
+        </logger>
+        <logger name="error" additivity="false" level="ERROR">
+            <appender-ref ref="ERROR"/>
+        </logger>
+        <logger name="error_alert" additivity="false" level="ERROR">
+            <appender-ref ref="ERROR_ALERT"/>
+        </logger>
+        <logger name="org.hibernate.resource.jdbc.internal.ResourceRegistryStandardImpl" level="DEBUG"/>
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="log-stg">
+        <logger name="info" additivity="false" level="INFO">
+            <appender-ref ref="INFO"/>
+        </logger>
+        <logger name="error" additivity="false" level="ERROR">
+            <appender-ref ref="ERROR"/>
+        </logger>
+        <logger name="error_alert" additivity="false" level="ERROR">
+            <appender-ref ref="ERROR_ALERT"/>
+        </logger>
+        <logger name="org.hibernate.resource.jdbc.internal.ResourceRegistryStandardImpl" level="OFF"/>
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="log-prd">
+        <logger name="info" additivity="false" level="INFO">
+            <appender-ref ref="INFO"/>
+        </logger>
+        <logger name="error" additivity="false" level="ERROR">
+            <appender-ref ref="ERROR"/>
+        </logger>
+        <logger name="error_alert" additivity="false" level="ERROR">
+            <appender-ref ref="ERROR_ALERT"/>
+        </logger>
+        <logger name="org.hibernate.resource.jdbc.internal.ResourceRegistryStandardImpl" level="OFF"/>
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+</configuration>

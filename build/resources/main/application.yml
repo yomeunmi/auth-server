@@ -1,0 +1,18 @@
+application.name: authorization-server
+
+#logging
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          servlet: debug
+          nodeValue: info
+        nodeValue: info
+
+# health check
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
