@@ -4,11 +4,11 @@ import com.auth.server.common.logging.util.AuthLogUtil;
 import com.auth.server.common.type.LogType;
 import lombok.Getter;
 import lombok.Setter;
-import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -16,8 +16,8 @@ public class ErrorLog extends BaseLog {
 
     private final String path;
     private final String method;
-    private final JSONObject params;
-    private final JSONObject headers;
+    private final Map<String,String> params;
+    private final Map<String,String> headers;
 
     private final String exceptionType;
     private final String errorMessage;
